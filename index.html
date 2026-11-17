@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>JS clock</title>
+	<style>
+		body {
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: #DEB887;
+
+		}
+		.container {
+			width: 510px;
+			height: 500px;
+			background-color: #0000FF; 
+		}
+		#stickers {
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+		}
+		.sticker {
+			position: absolute;
+			width: 72px;
+			height: 72px;
+			border-radius: 50%;
+			color: black;
+			font-weight: bold;
+			line-height: 72px;
+			text-align: center;
+			transform: rotate(15deg);
+		}
+		#bigTime {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 200px;
+			font-weight: bold;
+			font-family: sans-serif;
+			color: rgba(255, 255, 255, 0.6);
+			pointer-events: none;
+		}
+		.sticker.leaving {
+			animation: popAway 0.6s forwards;
+		}
+		@keyframes popAway {
+			0%   { transform: rotate(15deg) scale(1);   opacity: 1; }
+			30%  { transform: rotate(15deg) scale(1.4); opacity: 1; }
+			100% { transform: rotate(375deg) scale(0);  opacity: 0; }
+		}
+	</style>
+</head>
+<body>
+			<div class="container"></div>
+			<div id="bigTime"></div>
+			<div id="stickers"></div>
+<script>
+	const stickers = document.querySelector("#stickers")
+	const bigTime = document.querySelector("#bigTime");
+
+
+	colors = [
+		"#DC143C", "#FF1493", "#FF69B4", "#FFB6C1"
+	]
+
+	function tick() {
+		const now = new Date();
+		const hours = new Date().getHours(); // 0-23
+		const minutes = new Date().getMinutes(); // 0-59
+		const seconds = new Date().getSeconds(); // 0-59
+		
+		bigTime.textContent = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0");
+
+	// A new minute started, so pop all the old stickers away
+	if (seconds === 0) {
+		const oldStickers = stickers.querySelectorAll(".sticker");
+		oldStickers.forEach(function (s) {
+		const delay = Math.random() * 500;  // each one pops at a slightly different time
+		s.style.animationDelay = delay + "ms";
+		s.classList.add("leaving");
+		setTimeout(function () { s.remove(); }, delay + 600);});
+		}
+
+	if (seconds !== 0) {
+		addSticker(seconds);
+		}
+	}
+
+	function addSticker(text) {
+			const sticker = document.createElement("div");
+			sticker.className = "sticker";
+			sticker.textContent = text;
+			sticker.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+			sticker.style.top = Math.random() * 85 + "%";
+			sticker.style.left = Math.random() * 85 + "%";
+			stickers.appendChild(sticker);
+
+			setTimeout(function () { sticker.style.opacity = 0; }, 59000);   // start fading at 59s
+			}
+
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
